@@ -22,6 +22,9 @@ object Repository {
     private lateinit var retrofitApi: RetrofitApi
     private lateinit var props: Properties
 
+    private val words = MutableLiveData<List<Word>>()
+    private val wordbooks = MutableLiveData<List<Wordbook>>()
+    private val wordbookGroups = MutableLiveData<List<WordbookGroup>>()
     fun initialize(context: Context) {
         props = Properties()
         context.resources.assets.open("firebase.properties").use {
@@ -36,7 +39,9 @@ object Repository {
     }
 
     fun fetchWords(wordbookId: Int): MutableLiveData<List<Word>> {
-        val words = MutableLiveData<List<Word>>()
+        if ((words.value?.size ?: 0) > 0) {
+            return words
+        }
         val url = props.getProperty("url") + props.getProperty("words") + wordbookId + ".json"
         val request = retrofitApi.fetchWords(url)
         request.enqueue(object : Callback<String> {
@@ -62,7 +67,9 @@ object Repository {
     }
 
     fun fetchWordbooks(groupId: Int): MutableLiveData<List<Wordbook>> {
-        val wordbooks = MutableLiveData<List<Wordbook>>()
+        if ((wordbooks.value?.size ?: 0) > 0) {
+            return wordbooks
+        }
         val url = props.getProperty("url") + props.getProperty("wordbooks") + groupId + ".json"
         val request = retrofitApi.fetchWordbooks(url)
         request.enqueue(object : Callback<String> {
@@ -88,7 +95,9 @@ object Repository {
     }
 
     fun fetchWordbookGroups(): MutableLiveData<List<WordbookGroup>>{
-        val wordbookGroups = MutableLiveData<List<WordbookGroup>>()
+        if ((wordbookGroups.value?.size ?: 0) > 0) {
+            return wordbookGroups
+        }
         val request = retrofitApi.fetchWordbookGroups()
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {

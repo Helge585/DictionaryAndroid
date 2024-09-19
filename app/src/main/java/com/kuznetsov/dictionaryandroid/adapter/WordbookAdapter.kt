@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kuznetsov.dictionaryandroid.databinding.WordbookItemBinding
 import com.kuznetsov.dictionaryandroid.entity.Wordbook
 
-class WordbookAdapter(private val rootClickListener: (Wordbook) -> Unit):
+class WordbookAdapter(
+        private val openButtonClickListener: (Wordbook) -> Unit,
+        private val testButtonClickListener: (Wordbook) -> Unit
+        ):
         ListAdapter<Wordbook, WordbookAdapter.WordbookHolder>(WordbookDiffItemCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordbookHolder {
@@ -15,15 +18,20 @@ class WordbookAdapter(private val rootClickListener: (Wordbook) -> Unit):
     }
 
     override fun onBindViewHolder(holder: WordbookHolder, position: Int) {
-        holder.bind(getItem(position), rootClickListener)
+        holder.bind(getItem(position), openButtonClickListener, testButtonClickListener)
     }
 
     class WordbookHolder(val binding: WordbookItemBinding): RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(wordbook: Wordbook, rootClickListener: (Wordbook) -> Unit) {
+        fun bind(wordbook: Wordbook,
+                 openButtonClickListener: (Wordbook) -> Unit,
+                 testButtonClickListener: (Wordbook) -> Unit) {
             binding.wordbook = wordbook
-            binding.root.setOnClickListener {
-                rootClickListener(wordbook)
+            binding.wordbookOpenButton.setOnClickListener {
+                openButtonClickListener(wordbook)
+            }
+            binding.wordbookTestButton.setOnClickListener {
+                testButtonClickListener(wordbook)
             }
         }
 

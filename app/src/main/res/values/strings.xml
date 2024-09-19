@@ -2,4 +2,9 @@
     <string name="app_name">DictionaryAndroid</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="test_names">
+        <item>Write Russian</item>
+        <item>Write foreign</item>
+    </string-array>
 </resources>

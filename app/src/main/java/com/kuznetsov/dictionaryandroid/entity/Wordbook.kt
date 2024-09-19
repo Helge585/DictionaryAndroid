@@ -6,4 +6,8 @@ data class Wordbook(
     var groupId: Int,
     var result: Int,
     var lastDate: String
-)
+) {
+    fun resultToString() = "Last result: $result"
+
+    fun lastDateToString() = "Last date: $lastDate"
+}

@@ -7,7 +7,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:gravity="center"
         tools:context=".fragments.WordbooksFragment">
+
+        <LinearLayout
+            android:padding="8dp"
+            android:gravity="end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Test mode:"/>
+            <Spinner
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:entries="@array/test_names"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:layout_weight="1"

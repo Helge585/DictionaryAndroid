@@ -17,11 +17,83 @@
         app:cardElevation="4dp"
         app:cardCornerRadius="4dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
         <TextView
-            android:id="@+id/wordbookTextView"
-            android:layout_width="wrap_content"
+            android:id="@+id/wordbook_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@{ wordbook.toString() }"/>
+            android:gravity="center"
+            tools:text="name"
+            android:textSize="20sp"
+            android:layout_margin="8dp"
+            android:text="@{ wordbook.name }"/>
+
+        <TextView
+            android:id="@+id/wordbook_word_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="Word count"/>
+
+        <TextView
+            android:id="@+id/wordbook_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            tools:text="Result"
+            android:text="@{ wordbook.resultToString() }"/>
+
+        <TextView
+            android:id="@+id/wordbook_last_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            tools:text="Last date"
+            android:text="@{ wordbook.lastDateToString() }"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/wordbook_open_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Open"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <Button
+                    android:id="@+id/wordbook_test_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Test"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

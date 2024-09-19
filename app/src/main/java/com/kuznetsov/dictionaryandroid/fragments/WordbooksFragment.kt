@@ -9,10 +9,12 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.kuznetsov.dictionaryandroid.TestsFragmentRequestListener
 import com.kuznetsov.dictionaryandroid.WordsFragmentRequestListener
 import com.kuznetsov.dictionaryandroid.adapter.WordbookAdapter
 import com.kuznetsov.dictionaryandroid.data.Repository
 import com.kuznetsov.dictionaryandroid.databinding.FragmentWordbooksBinding
+import com.kuznetsov.dictionaryandroid.entity.Wordbook
 import com.kuznetsov.dictionaryandroid.entity.WordbookGroup
 import com.kuznetsov.dictionaryandroid.viewmodel.WordbooksViewModel
 import com.kuznetsov.dictionaryandroid.viewmodel.WordbooksViewModelFactory
@@ -41,9 +43,10 @@ class WordbooksFragment : Fragment() {
         val viewModel = ViewModelProvider(this, WordbooksViewModelFactory(groupId))
             .get(WordbooksViewModel::class.java)
 
-        val adapter = WordbookAdapter {
-            (activity as WordsFragmentRequestListener).onWordsFragmentRequest(it)
-        }
+        val adapter = WordbookAdapter(
+            this::requestWordsFragment,
+            this::requestTestsFragment
+        )
         binding.wordbooksList.adapter = adapter
         binding.wordbooksList.layoutManager = LinearLayoutManager(context)
 
@@ -53,6 +56,14 @@ class WordbooksFragment : Fragment() {
 
 
         return binding.root
+    }
+
+    private fun requestWordsFragment(wordbook: Wordbook) {
+        (activity as WordsFragmentRequestListener).onWordsFragmentRequest(wordbook)
+    }
+
+    private fun requestTestsFragment(wordbook: Wordbook) {
+        (activity as TestsFragmentRequestListener).onTestFragmentRequest(wordbook)
     }
 
     override fun onDestroyView() {
