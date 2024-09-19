@@ -22,10 +22,6 @@ object Repository {
     private lateinit var retrofitApi: RetrofitApi
     private lateinit var props: Properties
 
-    val wordbookGroups = MutableLiveData<List<WordbookGroup>>()
-    val wordbooks = MutableLiveData<List<Wordbook>>()
-    val words = MutableLiveData<List<Word>>()
-
     fun initialize(context: Context) {
         props = Properties()
         context.resources.assets.open("firebase.properties").use {
@@ -39,7 +35,8 @@ object Repository {
         retrofitApi = retrofit.create(RetrofitApi::class.java)
     }
 
-    fun downloadWords(wordbookId: Int) {
+    fun fetchWords(wordbookId: Int): MutableLiveData<List<Word>> {
+        val words = MutableLiveData<List<Word>>()
         val url = props.getProperty("url") + props.getProperty("words") + wordbookId + ".json"
         val request = retrofitApi.fetchWords(url)
         request.enqueue(object : Callback<String> {
@@ -48,22 +45,24 @@ object Repository {
                 val gson = Gson()
                 val type = object: TypeToken<Map<String, Word>>() {}.type
                 val map = gson.fromJson<Map<String, Word>>(json, type)
-                val wl = mutableListOf<Word>()
+                val bufWords = mutableListOf<Word>()
                 for (word in map.values) {
                     Log.i(TAG, word.toString())
-                    wl.add(word)
+                    bufWords.add(word)
                 }
-                words.value = wl
+                words.value = bufWords
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.i(TAG, t.toString())
+                Log.i(TAG, "fetchWords: ${ t.toString() }")
             }
 
         })
+        return words
     }
 
-    fun downloadWordbooks(groupId: Int) {
+    fun fetchWordbooks(groupId: Int): MutableLiveData<List<Wordbook>> {
+        val wordbooks = MutableLiveData<List<Wordbook>>()
         val url = props.getProperty("url") + props.getProperty("wordbooks") + groupId + ".json"
         val request = retrofitApi.fetchWordbooks(url)
         request.enqueue(object : Callback<String> {
@@ -81,13 +80,15 @@ object Repository {
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
-                Log.i(TAG, t.toString())
+                Log.i(TAG, "fetchWordbooks: ${ t.toString() }")
             }
 
         })
+        return wordbooks
     }
 
-    fun downloadWordbookGroups() {
+    fun fetchWordbookGroups(): MutableLiveData<List<WordbookGroup>>{
+        val wordbookGroups = MutableLiveData<List<WordbookGroup>>()
         val request = retrofitApi.fetchWordbookGroups()
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
@@ -103,10 +104,9 @@ object Repository {
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
-                val wl = mutableListOf<WordbookGroup>()
-                wl.add(WordbookGroup(-999, "ERRRORRR"))
-                wordbookGroups.value = wl
+                Log.e(TAG, "fetchWordbookGroups: ${ t.toString() }")
             }
         })
+        return wordbookGroups
     }
 }

@@ -1,6 +1,7 @@
 package com.kuznetsov.dictionaryandroid.fragments
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -8,21 +9,31 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.kuznetsov.dictionaryandroid.R
+import com.kuznetsov.dictionaryandroid.adapter.WordAdapter
 import com.kuznetsov.dictionaryandroid.data.Repository
+import com.kuznetsov.dictionaryandroid.databinding.FragmentWordsBinding
 import com.kuznetsov.dictionaryandroid.entity.Word
+import com.kuznetsov.dictionaryandroid.viewmodel.WordsViewModel
+import com.kuznetsov.dictionaryandroid.viewmodel.WordsViewModelFactory
+
+private const val TAG = "WordsFragment"
 
 private const val ARG_WORDBOOK_ID = "ARG_WORDBOOK_ID"
 
 
 class WordsFragment : Fragment() {
+    private var _binding: FragmentWordsBinding? = null
+    private val binding get() = _binding!!
 
     private var wordbookId: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i(TAG, "onCreate WordsFragment")
         arguments?.let {
             wordbookId = it.getInt(ARG_WORDBOOK_ID)
         }
@@ -32,48 +43,23 @@ class WordsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_words, container, false)
+        _binding = FragmentWordsBinding.inflate(layoutInflater, container, false)
 
-        val downloadWordsButton = view.findViewById<Button>(R.id.download_words_button)
-        downloadWordsButton.setOnClickListener {
-            wordbookId?.let {
-                Repository.downloadWords(it)
-            }
+        if (wordbookId == null) {
+            return binding.root
         }
+        val viewModel = ViewModelProvider(this, WordsViewModelFactory(wordbookId!!))
+            .get(WordsViewModel::class.java)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.words_list)
-        recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = WordAdapter(Repository.words.value ?: emptyList())
+        val adapter = WordAdapter()
+        binding.wordsList.adapter = adapter
+        binding.wordsList.layoutManager = LinearLayoutManager(context)
 
-        Repository.words.observe(viewLifecycleOwner, Observer {
-            (recyclerView.adapter as WordAdapter).words = it
-            (recyclerView.adapter as WordAdapter).notifyDataSetChanged()
+        viewModel.words.observe(viewLifecycleOwner, Observer {
+            adapter.submitList(it)
         })
 
-        return view
-    }
-
-    private inner class WordHolder(val view: View): RecyclerView.ViewHolder(view) {
-        fun bind(word: Word) {
-            view.findViewById<TextView>(R.id.wordTextView).text = word.toString()
-        }
-
-    }
-
-    private inner class WordAdapter(var words: List<Word>): RecyclerView.Adapter<WordHolder>() {
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordHolder {
-            val view = layoutInflater.inflate(R.layout.word_item, parent, false)
-            return WordHolder(view)
-        }
-
-        override fun getItemCount(): Int {
-            return words.size
-        }
-
-        override fun onBindViewHolder(holder: WordHolder, position: Int) {
-            holder.bind(words[position])
-        }
-
+        return binding.root
     }
 
     companion object {
