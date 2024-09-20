@@ -8,6 +8,32 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="8dp"
+                android:progress="40"
+                android:max="100"
+                android:secondaryProgress="60"
+                android:progressTint="@color/green"
+                android:secondaryProgressTint="@color/red"
+                android:progressBackgroundTint="@color/silver"
+                style="@android:style/Widget.ProgressBar.Horizontal"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0%"
+                android:textStyle="bold"
+                android:layout_centerInParent="true"/>
+        </RelativeLayout>
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tests_list"
             android:layout_weight="1"

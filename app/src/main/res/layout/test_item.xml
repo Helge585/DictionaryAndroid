@@ -12,7 +12,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="8dp"
         app:cardElevation="4dp"
         app:cardCornerRadius="4dp">
@@ -22,15 +22,33 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_margin="8dp"
+                android:text="Russian word"/>
             <EditText
                 android:id="@+id/russianWord"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
-                android:layout_margin="8dp"
-                android:editable="false"
-                android:background="@null"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:inputType="textMultiLine"
+                android:textSize="20sp"
+                android:background="@drawable/test_edittext_background"
                 android:text="@{ word.first }"
                 tools:text="Russian word" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:text="Foreign word"/>
 
             <EditText
                 android:id="@+id/foreignWord"
@@ -39,30 +57,34 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:editable="false"
-                android:background="@null"
+                android:inputType="textMultiLine"
+                android:textSize="20sp"
+                android:background="@drawable/test_edittext_background"
                 tools:text="Foreign word"
                 android:text="@{ word.second }"/>
 
             <TextView
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+                android:layout_margin="8dp"
+                android:padding="8dp"
+                android:textSize="20sp"
                 tools:text="Russian example"
-                android:visibility="invisible"
                 android:text="@{ word.firstExample }"/>
 
             <TextView
+                android:layout_weight="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:padding="8dp"
+                android:textSize="20sp"
                 tools:text="Foreign example"
-                android:visibility="invisible"
                 android:text="@{ word.secondExample }"/>
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
@@ -70,20 +92,47 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:id="@+id/russian_example_button"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Rusian\nexamle"/>
+                    android:text="Russian\nexample"/>
 
                 <Button
-                    android:layout_width="wrap_content"
+                    android:id="@+id/foreign_example_button"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Foreign\nexample"/>
+                    android:text="Foreign example"/>
 
                 <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:id="@+id/answer_button"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:text="Answer"/>
             </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/prev_button"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Prev"/>
+
+                <Button
+                    android:id="@+id/next_button"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Next"/>
+            </LinearLayout>
+
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>
