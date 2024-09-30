@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import com.kuznetsov.dictionaryandroid.entity.Word
 import com.kuznetsov.dictionaryandroid.entity.Wordbook
 import com.kuznetsov.dictionaryandroid.entity.WordbookGroup
+import com.kuznetsov.dictionaryandroid.utils.AnswerStatus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,8 +23,8 @@ object Repository {
     private lateinit var retrofitApi: RetrofitApi
     private lateinit var props: Properties
 
-    private val words = MutableLiveData<List<Word>>()
-    private val wordbooks = MutableLiveData<List<Wordbook>>()
+    private val wordsMap = mutableMapOf<Int, MutableLiveData<List<Word>>>()
+    private val wordbooksMap = mutableMapOf<Int, MutableLiveData<List<Wordbook>>>()
     private val wordbookGroups = MutableLiveData<List<WordbookGroup>>()
     fun initialize(context: Context) {
         props = Properties()
@@ -39,23 +40,32 @@ object Repository {
     }
 
     fun fetchWords(wordbookId: Int): MutableLiveData<List<Word>> {
-        if ((words.value?.size ?: 0) > 0) {
-            return words
+        wordsMap[wordbookId]?.let {
+            return it
         }
+        wordsMap[wordbookId] = MutableLiveData<List<Word>>()
         val url = props.getProperty("url") + props.getProperty("words") + wordbookId + ".json"
+        Log.i(TAG, "fetchWords url = $url")
         val request = retrofitApi.fetchWords(url)
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                val json = response.body()
+                Log.i(TAG, "words response body = ${ response.body().toString() }")
+                val json = response.body().toString()
                 val gson = Gson()
-                val type = object: TypeToken<Map<String, Word>>() {}.type
-                val map = gson.fromJson<Map<String, Word>>(json, type)
-                val bufWords = mutableListOf<Word>()
-                for (word in map.values) {
-                    Log.i(TAG, word.toString())
-                    bufWords.add(word)
+                if (json.first() == '{') {
+                    val type = object: TypeToken<Map<String, Word>>() {}.type
+                    wordsMap[wordbookId]?.value =
+                        gson.fromJson<Map<String, Word>>(json, type).values
+                            .filterNotNull()
+                            //.apply { forEach { it.answerStatus = AnswerStatus.UNANSWERED } }
+                } else if (json.first() == '[') {
+                    val type = object: TypeToken<List<Word>>() {}.type
+                    wordsMap[wordbookId]?.value =
+                        gson.fromJson<List<Word>>(json, type).filterNotNull()
+                            //.apply { forEach { it.answerStatus = AnswerStatus.UNANSWERED } }
+                } else {
+                    Log.i(TAG, "Error fetchWords: json = $json")
                 }
-                words.value = bufWords
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
@@ -63,27 +73,33 @@ object Repository {
             }
 
         })
-        return words
+        return wordsMap[wordbookId]!!
     }
 
     fun fetchWordbooks(groupId: Int): MutableLiveData<List<Wordbook>> {
-        if ((wordbooks.value?.size ?: 0) > 0) {
-            return wordbooks
+        wordbooksMap[groupId]?.let {
+            return it
         }
+        wordbooksMap[groupId] = MutableLiveData<List<Wordbook>>()
         val url = props.getProperty("url") + props.getProperty("wordbooks") + groupId + ".json"
+        Log.i(TAG, "fetchWordbooks url = $url")
         val request = retrofitApi.fetchWordbooks(url)
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                val json = response.body()
+                Log.i(TAG, "wordbooks response body = ${ response.body().toString() }")
+                val json = response.body().toString()
                 val gson = Gson()
-                val type = object: TypeToken<Map<String, Wordbook>>() {}.type
-                val map = gson.fromJson<Map<String, Wordbook>>(json, type)
-                val wl = mutableListOf<Wordbook>()
-                for (wordbook in map.values) {
-                    Log.i(TAG, wordbook.toString())
-                    wl.add(wordbook)
+                if (json.first() == '{') {
+                    val type = object: TypeToken<Map<String, Wordbook>>() {}.type
+                    wordbooksMap[groupId]?.value =
+                        gson.fromJson<Map<String, Wordbook>>(json, type).values.filterNotNull()
+                } else if (json.first() == '[') {
+                    val type = object: TypeToken<List<Wordbook>>() {}.type
+                    wordbooksMap[groupId]?.value =
+                        gson.fromJson<List<Wordbook>>(json, type).filterNotNull()
+                } else {
+                    Log.i(TAG, "Error fetchWordbooks: json = $json")
                 }
-                wordbooks.value = wl
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
@@ -91,7 +107,7 @@ object Repository {
             }
 
         })
-        return wordbooks
+        return wordbooksMap[groupId]!!
     }
 
     fun fetchWordbookGroups(): MutableLiveData<List<WordbookGroup>>{
@@ -101,15 +117,21 @@ object Repository {
         val request = retrofitApi.fetchWordbookGroups()
         request.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
+                Log.i(TAG, "groups response body = ${ response.body().toString() }")
+
                 val json = response.body().toString()
                 val gson = Gson()
-                val type = object : TypeToken<Map<String, WordbookGroup>>() {}.type
-                val map = gson.fromJson<Map<String, WordbookGroup>>(json, type)
-                val wl = mutableListOf<WordbookGroup>()
-                for (wordbookGroup in map.values) {
-                    wl.add(wordbookGroup)
+                if (json.first() == '{') {
+                    val type = object : TypeToken<Map<String, WordbookGroup>>() {}.type
+                    wordbookGroups.value = gson.fromJson<Map<String, WordbookGroup>>(json, type)
+                        .values.toList().filterNotNull()
+                } else if (json.first() == '[') {
+                    val type = object : TypeToken<List<WordbookGroup>>() {}.type
+                    wordbookGroups.value =
+                        gson.fromJson<List<WordbookGroup>>(json, type).filterNotNull()
+                } else {
+                    Log.i(TAG, "Error fetchWordbookGroups: json = $json")
                 }
-                wordbookGroups.value = wl
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {

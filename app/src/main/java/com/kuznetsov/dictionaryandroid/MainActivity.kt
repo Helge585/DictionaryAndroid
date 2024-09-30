@@ -1,6 +1,7 @@
 package com.kuznetsov.dictionaryandroid
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.kuznetsov.dictionaryandroid.data.Repository
 import com.kuznetsov.dictionaryandroid.entity.Wordbook
@@ -9,6 +10,7 @@ import com.kuznetsov.dictionaryandroid.fragments.TestsFragment
 import com.kuznetsov.dictionaryandroid.fragments.WordbookGroupFragment
 import com.kuznetsov.dictionaryandroid.fragments.WordbooksFragment
 import com.kuznetsov.dictionaryandroid.fragments.WordsFragment
+import com.kuznetsov.dictionaryandroid.utils.TestMode
 
 private const val TAG = "MainActivity"
 class MainActivity: AppCompatActivity(),
@@ -32,6 +34,7 @@ class MainActivity: AppCompatActivity(),
     }
 
     override fun onWordbooksFragmentRequest(wordbookGroup: WordbookGroup) {
+        Log.i(TAG, " onWordbooksFragmentRequest, wordbookGroup = $wordbookGroup")
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.host, WordbooksFragment.newInstance(wordbookGroup))
@@ -47,10 +50,10 @@ class MainActivity: AppCompatActivity(),
             .commit()
     }
 
-    override fun onTestFragmentRequest(wordbook: Wordbook) {
+    override fun onTestFragmentRequest(wordbook: Wordbook, testMode: String) {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.host, TestsFragment.newInstance(wordbook.id))
+            .replace(R.id.host, TestsFragment.newInstance(wordbook.id, testMode))
             .addToBackStack(null)
             .commit()
     }

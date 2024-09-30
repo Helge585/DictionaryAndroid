@@ -21,6 +21,7 @@
                 android:layout_height="wrap_content"
                 android:text="Test mode:"/>
             <Spinner
+                android:id="@+id/test_mode_spinner"
                 android:layout_width="wrap_content"
                 android:layout_height="48dp"
                 android:entries="@array/test_names"/>

@@ -29,7 +29,7 @@
                 android:layout_margin="8dp"
                 android:editable="false"
                 android:background="@null"
-                android:text="@{ word.first }"
+                android:text="@{ word.russianWord }"
                 tools:text="Russian word" />
 
             <EditText
@@ -42,7 +42,7 @@
                 android:editable="false"
                 android:background="@null"
                 tools:text="Foreign word"
-                android:text="@{ word.second }"/>
+                android:text="@{ word.foreignWord }"/>
             <EditText
                 android:id="@+id/russianExample"
                 android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
                 android:editable="false"
                 android:background="@null"
                 tools:text="Russian example"
-                android:text="@{ word.firstExample }"/>
+                android:text="@{ word.russianExample }"/>
             <EditText
                 android:id="@+id/foreignExample"
                 android:layout_width="wrap_content"
@@ -64,7 +64,7 @@
                 android:editable="false"
                 android:background="@null"
                 tools:text="Foreign example"
-                android:text="@{ word.secondExample }"/>
+                android:text="@{ word.foreignExample }"/>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </layout>

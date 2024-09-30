@@ -56,6 +56,7 @@ class WordsFragment : Fragment() {
         binding.wordsList.layoutManager = LinearLayoutManager(context)
 
         viewModel.words.observe(viewLifecycleOwner, Observer {
+            Log.i(TAG, "viewModel.words.observe = $it")
             adapter.submitList(it)
         })
 

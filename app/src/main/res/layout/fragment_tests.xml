@@ -13,19 +13,21 @@
             android:layout_height="wrap_content">
 
             <ProgressBar
+                android:id="@+id/test_progress_bar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:layout_margin="8dp"
-                android:progress="40"
                 android:max="100"
-                android:secondaryProgress="60"
+                android:progress="0"
+                android:secondaryProgress="0"
                 android:progressTint="@color/green"
                 android:secondaryProgressTint="@color/red"
                 android:progressBackgroundTint="@color/silver"
                 style="@android:style/Widget.ProgressBar.Horizontal"/>
 
             <TextView
+                android:id="@+id/test_progress_percent_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="0%"

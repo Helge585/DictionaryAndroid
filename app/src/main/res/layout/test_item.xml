@@ -35,10 +35,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:inputType="textMultiLine"
                 android:textSize="20sp"
+                android:inputType="text"
                 android:background="@drawable/test_edittext_background"
-                android:text="@{ word.first }"
+                android:text=""
                 tools:text="Russian word" />
 
             <TextView
@@ -57,33 +57,35 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
-                android:inputType="textMultiLine"
                 android:textSize="20sp"
+                android:inputType="text"
                 android:background="@drawable/test_edittext_background"
                 tools:text="Foreign word"
-                android:text="@{ word.second }"/>
+                android:text=""/>
 
             <TextView
-                android:layout_weight="1"
+                android:id="@+id/russian_example"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_margin="8dp"
                 android:padding="8dp"
                 android:textSize="20sp"
                 tools:text="Russian example"
-                android:text="@{ word.firstExample }"/>
+                android:text=""/>
 
             <TextView
-                android:layout_weight="1"
+                android:id="@+id/foreign_example"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:padding="8dp"
                 android:textSize="20sp"
                 tools:text="Foreign example"
-                android:text="@{ word.secondExample }"/>
+                android:text=""/>
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -92,25 +94,11 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/russian_example_button"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Russian\nexample"/>
-
-                <Button
-                    android:id="@+id/foreign_example_button"
-                    android:layout_weight="1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Foreign example"/>
-
-                <Button
-                    android:id="@+id/answer_button"
+                    android:id="@+id/show_answer_button"
                     android:layout_weight="1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:text="Answer"/>
+                    android:text="Show Answer"/>
             </LinearLayout>
 
             <LinearLayout

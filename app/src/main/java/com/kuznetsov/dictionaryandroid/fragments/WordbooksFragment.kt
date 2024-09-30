@@ -16,6 +16,7 @@ import com.kuznetsov.dictionaryandroid.data.Repository
 import com.kuznetsov.dictionaryandroid.databinding.FragmentWordbooksBinding
 import com.kuznetsov.dictionaryandroid.entity.Wordbook
 import com.kuznetsov.dictionaryandroid.entity.WordbookGroup
+import com.kuznetsov.dictionaryandroid.utils.TestMode
 import com.kuznetsov.dictionaryandroid.viewmodel.WordbooksViewModel
 import com.kuznetsov.dictionaryandroid.viewmodel.WordbooksViewModelFactory
 
@@ -63,7 +64,8 @@ class WordbooksFragment : Fragment() {
     }
 
     private fun requestTestsFragment(wordbook: Wordbook) {
-        (activity as TestsFragmentRequestListener).onTestFragmentRequest(wordbook)
+        val mode = binding.testModeSpinner.selectedItem.toString()
+        (activity as TestsFragmentRequestListener).onTestFragmentRequest(wordbook, mode)
     }
 
     override fun onDestroyView() {
