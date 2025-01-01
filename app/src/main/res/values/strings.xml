@@ -6,5 +6,7 @@
     <string-array name="test_names">
         <item>Write Russian</item>
         <item>Write foreign</item>
+        <item>Guess Russian</item>
+        <item>Guess foreign</item>
     </string-array>
 </resources>

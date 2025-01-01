@@ -5,12 +5,15 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.kuznetsov.dictionaryandroid.R
+import com.kuznetsov.dictionaryandroid.databinding.GuessingTestItemBinding
 import com.kuznetsov.dictionaryandroid.databinding.TestItemBinding
 import com.kuznetsov.dictionaryandroid.entity.Word
 import com.kuznetsov.dictionaryandroid.utils.AnswerStatus
+import java.lang.IllegalArgumentException
 
 private const val TAG = "TestAdapter"
 
@@ -35,7 +38,7 @@ class TestAdapter(
 //        }
 //    }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TestHolder {
-        return TestHolder.inflateFrom(parent)
+        return TestHolder.inflateFrom(parent, testMode)
     }
 
     override fun onBindViewHolder(holder: TestHolder, position: Int) {
@@ -43,14 +46,25 @@ class TestAdapter(
         holder.bind(getItem(position), testMode, position, step, setAnswer)
     }
 
-    class TestHolder(private val binding: TestItemBinding): ViewHolder(binding.root) {
+    class TestHolder(private val _binding: ViewDataBinding): ViewHolder(_binding.root) {
 
         fun bind(word: Word, testMode: String, position: Int, step: (Int) -> Unit,
                  setAnswer: (Boolean, Int) -> Unit) {
 
+            if (_binding is TestItemBinding) {
+                bindWritingTest(_binding, word, testMode, position, step, setAnswer)
+            } else if (_binding is GuessingTestItemBinding) {
+                bindGuessingTest(_binding, word, testMode, position, step, setAnswer)
+            }
+
+        }
+
+        private fun bindWritingTest(binding: TestItemBinding, word: Word, testMode: String, position: Int,
+                                    step: (Int) -> Unit,
+                                    setAnswer: (Boolean, Int) -> Unit) {
             binding.word = word
 
-            setStyle(testMode, word, true)
+            setStyle(binding, testMode, word, true)
 
             binding.nextButton.setOnClickListener {
                 step(position + 1)
@@ -59,39 +73,53 @@ class TestAdapter(
                 step(position - 1)
             }
             binding.showAnswerButton.setOnClickListener {
-                showWordsAndExamples(word)
+                showWordsAndExamples(binding, word)
             }
 
             binding.russianWord.setOnKeyListener { view, i, keyEvent ->
                 if (i == KeyEvent.KEYCODE_ENTER && keyEvent.action == KeyEvent.ACTION_DOWN) {
-                    setAnswer(checkAnswer(testMode, word), 1)
+                    setAnswer(checkAnswer(binding, testMode, word), 1)
                 }
                 return@setOnKeyListener true
             }
 
             binding.foreignWord.setOnKeyListener { view, i, keyEvent ->
                 if (i == KeyEvent.KEYCODE_ENTER) {
-                    setAnswer(checkAnswer(testMode, word), 1)
+                    setAnswer(checkAnswer(binding, testMode, word), 1)
                 }
                 return@setOnKeyListener true
             }
         }
 
-        private fun setStyle(testMode: String, word: Word, isClearTypingFields: Boolean = false) {
+        private fun bindGuessingTest(binding: GuessingTestItemBinding, word: Word,
+                                     testMode: String, position: Int,
+                                     step: (Int) -> Unit,
+                                     setAnswer: (Boolean, Int) -> Unit) {
+
+            if (testMode == "Guess Russian") {
+                binding.questionWord.text = word.russianWord
+            } else if (testMode == "Guess foreign") {
+                binding.questionWord.text = word.foreignWord
+            }
+        }
+
+        private fun setStyle(binding: TestItemBinding,
+                             testMode: String, word: Word, isClearTypingFields: Boolean = false) {
             when (word.answerStatus) {
                 AnswerStatus.UNANSWERED -> {
-                    setUnansweredStyle(testMode, word, isClearTypingFields)
+                    setUnansweredStyle(binding, testMode, word, isClearTypingFields)
                 }
                 AnswerStatus.RIGHT -> {
-                    setRightAnswerStyle(testMode, word)
+                    setRightAnswerStyle(binding, testMode, word)
                 }
                 AnswerStatus.WRONG -> {
-                    setWrongAnswerStyle(testMode, word, isClearTypingFields)
+                    setWrongAnswerStyle(binding, testMode, word, isClearTypingFields)
                 }
             }
         }
 
-        private fun setUnansweredStyle(testMode: String, word: Word, isClearTypingFields: Boolean) {
+        private fun setUnansweredStyle(binding: TestItemBinding,
+                                       testMode: String, word: Word, isClearTypingFields: Boolean) {
             when (testMode) {
                 "Write Russian" -> {
                     binding.russianWord.isEnabled = true
@@ -127,8 +155,9 @@ class TestAdapter(
             binding.foreignExample.setText("")
         }
 
-        private fun setRightAnswerStyle(testMode: String, word: Word) {
-            showWordsAndExamples(word)
+        private fun setRightAnswerStyle(binding: TestItemBinding,
+                                        testMode: String, word: Word) {
+            showWordsAndExamples(binding, word)
 
             binding.russianWord.isEnabled = false
             binding.russianWord.setTextColor(Color.BLACK)
@@ -139,7 +168,8 @@ class TestAdapter(
             binding.foreignWord.setBackgroundResource(R.drawable.test_item_right_answer)
         }
 
-        private fun setWrongAnswerStyle(testMode: String, word: Word, isClearTypingFields: Boolean) {
+        private fun setWrongAnswerStyle(binding: TestItemBinding,
+                                        testMode: String, word: Word, isClearTypingFields: Boolean) {
             when (testMode) {
                 "Write Russian" -> {
                     binding.russianWord.isEnabled = true
@@ -170,7 +200,8 @@ class TestAdapter(
             binding.foreignExample.setText("")
         }
 
-        private fun checkAnswer(testMode: String, word: Word): Boolean {
+        private fun checkAnswer(binding: TestItemBinding,
+                                testMode: String, word: Word): Boolean {
             val isAnswerTrue = when (testMode) {
                 "Write Russian" -> {
                     binding.russianWord.text.toString().lowercase().trim() ==
@@ -184,15 +215,16 @@ class TestAdapter(
             }
             if (isAnswerTrue) {
                 word.answerStatus = AnswerStatus.RIGHT
-                setStyle(testMode, word)
+                setStyle(binding, testMode, word)
             } else {
                 word.answerStatus = AnswerStatus.WRONG
-                setStyle(testMode, word)
+                setStyle(binding, testMode, word)
             }
             return isAnswerTrue
         }
 
-        private fun showWordsAndExamples(word: Word) {
+        private fun showWordsAndExamples(binding: TestItemBinding,
+                                         word: Word) {
             binding.russianExample.text = word.russianExample
             binding.foreignExample.text = word.foreignExample
             binding.russianWord.setText(word.russianWord)
@@ -200,9 +232,17 @@ class TestAdapter(
         }
 
         companion object {
-            fun inflateFrom(parent: ViewGroup): TestHolder {
+            fun inflateFrom(parent: ViewGroup, testMode: String): TestHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                return TestHolder(TestItemBinding.inflate(layoutInflater, parent, false))
+                return when(testMode) {
+                    "Write Russian", "Write foreign" ->
+                        TestHolder(TestItemBinding.inflate(layoutInflater, parent, false))
+
+                    "Guess Russian", "Guess foreign" ->
+                        TestHolder(GuessingTestItemBinding.inflate(layoutInflater, parent, false))
+
+                    else -> throw IllegalArgumentException("Wrong test mode = $testMode")
+                }
             }
         }
     }
