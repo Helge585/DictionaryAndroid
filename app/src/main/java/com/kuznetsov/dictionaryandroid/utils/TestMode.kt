@@ -17,3 +17,8 @@ enum class TestMode {
 enum class AnswerStatus {
     RIGHT, WRONG, UNANSWERED
 }
+
+enum class WordType {
+    RUSSIAN, FOREIGN;
+
+}

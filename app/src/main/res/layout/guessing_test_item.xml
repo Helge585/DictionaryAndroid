@@ -10,6 +10,9 @@
             type="com.kuznetsov.dictionaryandroid.entity.Word" />
     </data>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,6 +21,7 @@
         app:cardCornerRadius="4dp">
 
         <LinearLayout
+            android:id="@+id/test"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -83,6 +87,7 @@
                 tools:text="Answer word 4"
                 android:text="answerWord4"/>
 
+
             <TextView
                 android:id="@+id/russian_example"
                 android:layout_width="match_parent"
@@ -143,4 +148,5 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
+    </ScrollView>
 </layout>

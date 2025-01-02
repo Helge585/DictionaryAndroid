@@ -63,10 +63,19 @@ class TestsFragment : Fragment() {
             },
             { isAnswerTrue: Boolean, stepValue: Int ->
                 setAnswer(isAnswerTrue, stepValue)
+            },
+            {word, wordType, wordCount ->
+                viewModel.generateWordsForGuessingTest(word, wordType, wordCount)
             }
         )
+
         binding.testsList.adapter = adapter
-        binding.testsList.layoutManager = LinearLayoutManager(context)
+        //binding.testsList.layoutManager = LinearLayoutManager(context)
+        binding.testsList.layoutManager = LinearLayoutManager(
+            context,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
 
         viewModel.words.observe(viewLifecycleOwner, Observer {
             adapter.submitList(it)
